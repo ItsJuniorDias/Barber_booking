@@ -11,8 +11,22 @@ import {
   Footer,
 } from "./styles";
 import { Colors } from "@/constants/Colors";
+import { useState } from "react";
 
 export default function LoginScreen() {
+  const [email, setEmail] = useState("");
+
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleChange = (item) => {
+    setEmail(item);
+  };
+
+  const handleChangePassword = (item) => {
+    setPassword(item);
+  };
+
   return (
     <Container>
       <Thumb source={thumb} />
@@ -33,7 +47,25 @@ export default function LoginScreen() {
         />
 
         <ContentInput>
-          <CustomInputs />
+          <CustomInputs
+            value={email}
+            onChangeText={handleChange}
+            icon="mail"
+            placeholder="Joesamanta@gmail.com"
+            title="Username"
+            showPassword={false}
+          />
+
+          <CustomInputs
+            value={password}
+            onChangeText={handleChangePassword}
+            icon="key"
+            placeholder="*********"
+            title="Password"
+            showPassword
+            secureTextEntry={!showPassword}
+            setShowPassword={setShowPassword}
+          />
         </ContentInput>
 
         <ContentForget>

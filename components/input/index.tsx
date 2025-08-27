@@ -6,15 +6,31 @@ import { Text } from "../";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 
-export default function CustomInputs() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+interface CustomInputsProps {
+  value: string;
+  onChangeText: (item: string) => void;
+  title: string;
+  placeholder: string;
+  icon: string;
+  showPassword?: boolean;
+  setShowPassword?: React.Dispatch<React.SetStateAction<boolean>>;
+  secureTextEntry?: boolean;
+}
 
+export default function CustomInputs({
+  value,
+  title,
+  placeholder,
+  icon,
+  onChangeText,
+  showPassword,
+  setShowPassword,
+  secureTextEntry,
+}: CustomInputsProps) {
   return (
     <View style={styles.container}>
       <Text
-        title="Username"
+        title={title}
         fontFamily="semi-bold"
         fontSize={16}
         color={Colors.light.tint}
@@ -23,51 +39,32 @@ export default function CustomInputs() {
 
       <View style={styles.content}>
         <Ionicons
-          name="mail"
+          name={icon}
           size={20}
           color="#2d1b69"
           style={{ marginRight: 8 }}
         />
         <TextInput
-          placeholder="Joesamanta@gmail.com"
+          placeholder={placeholder}
           placeholderTextColor="#aaa"
           style={styles.input}
-          value={email}
-          onChangeText={setEmail}
+          value={value}
+          onChangeText={onChangeText}
           keyboardType="email-address"
+          secureTextEntry={secureTextEntry}
         />
-      </View>
 
-      <Text
-        title="Password"
-        fontFamily="semi-bold"
-        fontSize={16}
-        color={Colors.light.tint}
-        style={{ marginBottom: 16 }}
-      />
-
-      <View style={styles.content}>
-        <Ionicons
-          name="key"
-          size={20}
-          color="#2d1b69"
-          style={{ marginRight: 8 }}
-        />
-        <TextInput
-          placeholder="********"
-          placeholderTextColor="#aaa"
-          style={styles.input}
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <Ionicons
-            name={showPassword ? "eye" : "eye-off"}
-            size={20}
-            color="#aaa"
-          />
-        </TouchableOpacity>
+        {showPassword && (
+          <TouchableOpacity
+            onPress={() => setShowPassword((prevState) => !prevState)}
+          >
+            <Ionicons
+              name={!secureTextEntry ? "eye" : "eye-off"}
+              size={20}
+              color="#aaa"
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
