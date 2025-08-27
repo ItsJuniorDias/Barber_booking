@@ -7,8 +7,14 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
+import * as SplashScreen from "expo-splash-screen";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -26,6 +32,11 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
+        <Stack.Screen
+          name="(onboarding)/index"
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
