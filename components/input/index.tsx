@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Text } from "../";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -26,6 +30,7 @@ export default function CustomInputs({
   showPassword,
   setShowPassword,
   secureTextEntry,
+  errors,
 }: CustomInputsProps) {
   return (
     <View style={styles.container}>
@@ -37,7 +42,7 @@ export default function CustomInputs({
         style={{ marginBottom: 16 }}
       />
 
-      <View style={styles.content}>
+      <View style={[styles.content, errors && styles.errorInput]}>
         <Ionicons
           name={icon}
           size={20}
@@ -47,7 +52,7 @@ export default function CustomInputs({
         <TextInput
           placeholder={placeholder}
           placeholderTextColor="#aaa"
-          style={styles.input}
+          style={[styles.input]}
           value={value}
           onChangeText={onChangeText}
           keyboardType="email-address"
@@ -66,6 +71,15 @@ export default function CustomInputs({
           </TouchableOpacity>
         )}
       </View>
+
+      {errors && (
+        <Text
+          title={errors.message}
+          fontFamily="regular"
+          fontSize={14}
+          color="red"
+        />
+      )}
     </View>
   );
 }
@@ -83,12 +97,16 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 10,
     paddingHorizontal: 10,
-    marginBottom: 20,
+    marginBottom: 8,
     height: 50,
   },
   input: {
     flex: 1,
     fontSize: 15,
     fontFamily: "PlusJakartaSansSemiBold",
+  },
+  errorInput: {
+    borderColor: "red",
+    borderWidth: 2,
   },
 });

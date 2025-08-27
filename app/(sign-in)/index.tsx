@@ -13,20 +13,37 @@ import {
 import { Colors } from "@/constants/Colors";
 import { useState } from "react";
 
-export default function LoginScreen() {
-  const [email, setEmail] = useState("");
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-  const [password, setPassword] = useState("");
+const schema = z.object({
+  email: z.string().email("* E-mail inválido"),
+  password: z.string().min(6, "* A senha deve ter pelo menos 6 caracteres"),
+});
+
+type FormData = z.infer<typeof schema>;
+
+export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleChange = (item) => {
-    setEmail(item);
-  };
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const handleChangePassword = (item) => {
-    setPassword(item);
-  };
+  console.log(errors, "ERROR");
 
+  const onSubmit = (data: FormData) => {
+    console.log("Login:", data);
+  };
   return (
     <Container>
       <Thumb source={thumb} />
@@ -34,7 +51,7 @@ export default function LoginScreen() {
       <Content>
         <Text
           title="Welcome back 👋"
-          fontFamily="semi-bold"
+          fontFamily="bold"
           color={Colors.light.tint}
           fontSize={28}
         />
@@ -47,24 +64,42 @@ export default function LoginScreen() {
         />
 
         <ContentInput>
-          <CustomInputs
-            value={email}
-            onChangeText={handleChange}
-            icon="mail"
-            placeholder="Joesamanta@gmail.com"
-            title="Username"
-            showPassword={false}
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, value } }) => (
+              <>
+                <CustomInputs
+                  value={value}
+                  onChangeText={onChange}
+                  icon="mail"
+                  placeholder="Joesamanta@gmail.com"
+                  title="Username"
+                  showPassword={false}
+                  errors={errors.email}
+                />
+              </>
+            )}
           />
 
-          <CustomInputs
-            value={password}
-            onChangeText={handleChangePassword}
-            icon="key"
-            placeholder="*********"
-            title="Password"
-            showPassword
-            secureTextEntry={!showPassword}
-            setShowPassword={setShowPassword}
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, value } }) => (
+              <>
+                <CustomInputs
+                  value={value}
+                  onChangeText={onChange}
+                  icon="key"
+                  placeholder="*********"
+                  title="Password"
+                  showPassword
+                  secureTextEntry={!showPassword}
+                  setShowPassword={setShowPassword}
+                  errors={errors.password}
+                />
+              </>
+            )}
           />
         </ContentInput>
 
@@ -77,7 +112,11 @@ export default function LoginScreen() {
           />
         </ContentForget>
 
-        <Button title="Login" onPress={() => {}} isLoading={false} />
+        <Button
+          title="Login"
+          onPress={handleSubmit(onSubmit)}
+          isLoading={false}
+        />
 
         <Footer>
           <Text

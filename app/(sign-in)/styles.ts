@@ -19,7 +19,7 @@ export const Content = styled.View`
   padding: 24px;
   border-top-right-radius: 44px;
   border-top-left-radius: 44px;
-  margin-top: -32px;
+  margin-top: -96px;
   gap: 8px;
 `;
 
