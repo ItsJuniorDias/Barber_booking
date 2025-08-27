@@ -2,7 +2,7 @@ import { TextProps } from "react-native";
 
 import { TextCustom } from "./styles";
 
-type FontLine = 12 | 14 | 16 | 18 | 20 | 22 | 24 | 32 | 40;
+type FontLine = 12 | 14 | 16 | 18 | 20 | 22 | 24 | 28 | 32 | 40;
 
 interface TextPropsCustom extends TextProps {
   title: string | undefined;

@@ -10,6 +10,7 @@ import { Text, Button } from "@/components";
 import { Colors } from "@/constants/Colors";
 
 import { Container, Thumbnail, Content, ContentButton } from "./styles";
+import { useRouter } from "expo-router";
 
 const data = [
   { id: "1", image: avatar },
@@ -22,6 +23,8 @@ const { width } = Dimensions.get("window");
 export default function OnboardingScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+
+  const router = useRouter();
 
   const handleScroll = (event: any) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -101,7 +104,11 @@ export default function OnboardingScreen() {
         </View>
 
         <ContentButton>
-          <Button onPress={() => {}} title="Get Started" isLoading={false} />
+          <Button
+            onPress={() => router.push("/(sign-in)")}
+            title="Get Started"
+            isLoading={false}
+          />
         </ContentButton>
       </Content>
     </>
