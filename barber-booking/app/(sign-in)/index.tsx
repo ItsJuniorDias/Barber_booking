@@ -93,7 +93,7 @@ export default function LoginScreen() {
                   value={value}
                   onChangeText={onChange}
                   icon="mail"
-                  placeholder="Joesamanta@gmail.com"
+                  placeholder="itsjuniordias1997@gmail.com"
                   title="Username"
                   showPassword={false}
                   errors={errors.email}
