@@ -7,11 +7,18 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  Alert,
 } from "react-native";
 
 import { Text } from "@/components";
+import { api } from "@/service/api";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 export default function AuthenticationScreen() {
+  const { phone } = useLocalSearchParams();
+
+  const router = useRouter();
+
   const [code, setCode] = useState(["", "", "", ""]);
   const inputs = useRef<(TextInput | null)[]>([]);
 
@@ -31,10 +38,29 @@ export default function AuthenticationScreen() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const finalCode = code.join("");
     console.log("Code entered:", finalCode);
-    // Aqui você pode chamar sua API
+
+    try {
+      const response = await api.post("/verify-otp", {
+        phone,
+        code: finalCode,
+      });
+
+      router.push("/(home)");
+
+      console.log(response.data, "RESPONSE DATA");
+    } catch (error) {
+      Alert.alert("Error", "Codigo incorrreto ou inválido", [
+        {
+          text: "Cancelar",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => console.log("OK Pressed") },
+      ]);
+    }
   };
 
   return (

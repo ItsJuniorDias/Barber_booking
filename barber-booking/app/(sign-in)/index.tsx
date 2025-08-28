@@ -59,10 +59,8 @@ export default function LoginScreen() {
       });
 
       if (!!response.data.token) {
-        router.push("/(home)");
+        router.push("/(app)");
       }
-
-      console.log(response.data.token, "RESPONSE");
     } catch (error) {
       console.log(error);
     }
@@ -141,7 +139,7 @@ export default function LoginScreen() {
           isLoading={isLoading}
         />
 
-        <Footer onPress={() => router.push("/(authentication)")}>
+        <Footer onPress={() => router.push("/(register)")}>
           <Text
             title="Don't have an account?"
             color={Colors.light.gray}

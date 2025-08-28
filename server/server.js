@@ -1,21 +1,57 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const authRoutes = require("./routes/authRoutes");
+const twilio = require("twilio");
 
 const connectDB = require("./config/db");
-
 const User = require("./models/User");
+const Otp = require("./models/Otp");
 
 require("dotenv").config();
 connectDB();
 
 // Twilio
+const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH);
 
 const app = express();
 app.use(express.json());
 
-app.use("/auth", authRoutes);
+// Rota para enviar código
+app.post("/send-otp", async (req, res) => {
+  const { phone } = req.body;
+
+  const code = Math.floor(1000 + Math.random() * 9000).toString();
+
+  await Otp.create({
+    phone,
+    code,
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+  });
+
+  // Enviar SMS
+  await client.messages.create({
+    body: `Seu código de verificação é: ${code}`,
+    from: process.env.TWILIO_PHONE, // Número do Twilio
+    to: phone,
+  });
+
+  res.json({ success: true, message: "Código enviado!" });
+});
+
+// Rota para verificar código
+app.post("/verify-otp", async (req, res) => {
+  const { phone, code } = req.body;
+
+  const otp = await Otp.findOne({ phone, code });
+
+  if (!otp)
+    return res.status(400).json({ success: false, message: "Código inválido" });
+
+  if (otp.expiresAt < new Date())
+    return res.status(400).json({ success: false, message: "Código expirado" });
+
+  res.json({ success: true, message: "Verificado com sucesso!" });
+});
 
 // Lista dodos os usuários
 app.get("/users", authenticateToken, async (req, res) => {

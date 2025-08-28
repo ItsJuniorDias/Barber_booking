@@ -39,10 +39,6 @@ type FormData = z.infer<typeof schema>;
 export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const [open, setOpen] = useState(true);
-
-  const [showAlert, setShowAlert] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -70,18 +66,52 @@ export default function RegisterScreen() {
 
     setIsLoading(true);
 
-    await api
-      .post("/register", {
+    const result = await api.post("/send-otp", {
+      phone: `+55${data.phone}`,
+    });
+
+    console.log(result.data, "RESPONSE SEND");
+
+    try {
+      await api.post("/register", {
         name: data.name,
         email: data.email,
         phone: data.phone,
         password: data.password,
         confirmPassword: data.confirmPassword,
-      })
-      .then((response) => {
-        setIsLoading(false);
+      });
 
-        Alert.alert("Sucesso", "User cadastrado com sucesso ✅", [
+      setIsLoading(false);
+
+      Alert.alert("Sucesso", "User cadastrado com sucesso ✅", [
+        {
+          text: "Cancelar",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () =>
+            router.push({
+              pathname: "/(authentication)",
+              params: {
+                phone: `+55${data.phone}`,
+              },
+            }),
+        },
+      ]);
+
+      setValue("name", "");
+      setValue("email", "");
+      setValue("phone", "");
+      setValue("password", "");
+      setValue("confirmPassword", "");
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error.status, "ERROR");
+
+      if (error.status === 402) {
+        Alert.alert("Error", "Email já cadastrado", [
           {
             text: "Cancelar",
             onPress: () => console.log("Cancel Pressed"),
@@ -89,41 +119,19 @@ export default function RegisterScreen() {
           },
           { text: "OK", onPress: () => console.log("OK Pressed") },
         ]);
+      }
 
-        setValue("name", "");
-        setValue("email", "");
-        setValue("phone", "");
-        setValue("password", "");
-        setValue("confirmPassword", "");
-
-        console.log(response.data);
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        console.log(error.status, "ERROR");
-
-        if (error.status === 402) {
-          Alert.alert("Error", "Email já cadastrado", [
-            {
-              text: "Cancelar",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel",
-            },
-            { text: "OK", onPress: () => console.log("OK Pressed") },
-          ]);
-        }
-
-        if (error.status === 401) {
-          Alert.alert("Error", "Celular já cadastrado", [
-            {
-              text: "Cancelar",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel",
-            },
-            { text: "OK", onPress: () => console.log("OK Pressed") },
-          ]);
-        }
-      });
+      if (error.status === 401) {
+        Alert.alert("Error", "Celular já cadastrado", [
+          {
+            text: "Cancelar",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ]);
+      }
+    }
   };
 
   return (
