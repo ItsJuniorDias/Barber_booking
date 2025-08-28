@@ -20,7 +20,7 @@ const schema = z
   .object({
     name: z.string("* Campo obrigatório").min(1, "* Campo obrigatório"),
     email: z.string().email("* E-mail inválido"),
-    celular: z
+    phone: z
       .string()
       .trim()
       .regex(/^\d{10,11}$/, "Número inválido — use apenas dígitos (10 ou 11)."),
@@ -49,7 +49,7 @@ export default function RegisterScreen() {
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
-      celular: "",
+      phone: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -119,7 +119,7 @@ export default function RegisterScreen() {
 
         <Controller
           control={control}
-          name="celular"
+          name="phone"
           render={({ field: { onChange, value } }) => (
             <>
               <CustomInputs
@@ -129,7 +129,7 @@ export default function RegisterScreen() {
                 placeholder="17 99111-5745"
                 title="Phone number"
                 showPassword={false}
-                errors={errors.celular}
+                errors={errors.phone}
               />
             </>
           )}

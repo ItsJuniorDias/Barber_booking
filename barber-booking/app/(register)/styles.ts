@@ -4,8 +4,8 @@ import { Colors } from "@/constants/Colors";
 
 export const Container = styled.ScrollView`
   flex: 1;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
   padding-top: ${Constants.statusBarHeight};
   background-color: ${Colors.light.background};
 `;
