@@ -26,9 +26,14 @@ app.post("/register", async (req, res) => {
   const { name, email, phone, password, confirmPassword } = req.body;
 
   const existingUser = await User.findOne({ email });
+  const existingPhone = await User.findOne({ phone });
 
   if (existingUser) {
-    return res.status(400).json({ message: "Usuário já existe" });
+    return res.status(402).json({ message: "Usuário já existe" });
+  }
+
+  if (existingPhone) {
+    return res.status(401).json({ message: "Celular já cadastrado" });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
