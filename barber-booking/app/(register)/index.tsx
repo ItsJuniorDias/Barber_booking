@@ -66,12 +66,6 @@ export default function RegisterScreen() {
 
     setIsLoading(true);
 
-    const result = await api.post("/send-otp", {
-      phone: `+55${data.phone}`,
-    });
-
-    console.log(result.data, "RESPONSE SEND");
-
     try {
       await api.post("/register", {
         name: data.name,
@@ -79,6 +73,10 @@ export default function RegisterScreen() {
         phone: data.phone,
         password: data.password,
         confirmPassword: data.confirmPassword,
+      });
+
+      await api.post("/send-otp", {
+        phone: `+55${data.phone}`,
       });
 
       setIsLoading(false);

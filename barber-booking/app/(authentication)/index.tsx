@@ -43,14 +43,12 @@ export default function AuthenticationScreen() {
     console.log("Code entered:", finalCode);
 
     try {
-      const response = await api.post("/verify-otp", {
+      await api.post("/verify-otp", {
         phone,
         code: finalCode,
       });
 
-      router.push("/(home)");
-
-      console.log(response.data, "RESPONSE DATA");
+      router.push("/(tabs)");
     } catch (error) {
       Alert.alert("Error", "Codigo incorrreto ou inválido", [
         {

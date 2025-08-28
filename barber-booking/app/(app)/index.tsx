@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FlatList, Dimensions, View } from "react-native";
 
 import avatar from "../../assets/images/avatar.png";
@@ -11,6 +11,7 @@ import { Colors } from "@/constants/Colors";
 
 import { Container, Thumbnail, Content, ContentButton } from "./styles";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const data = [
   { id: "1", image: avatar },
@@ -23,6 +24,20 @@ const { width } = Dimensions.get("window");
 export default function OnboardingScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+
+  const handleStore = async () => {
+    const tokenUser = await AsyncStorage.getItem("@token");
+
+    if (tokenUser) {
+      router.push("/(tabs)");
+    } else {
+      router.push("/(app)");
+    }
+  };
+
+  useEffect(() => {
+    handleStore();
+  }, []);
 
   const router = useRouter();
 

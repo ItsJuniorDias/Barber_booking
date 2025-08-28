@@ -11,7 +11,7 @@ import {
   Footer,
 } from "./styles";
 import { Colors } from "@/constants/Colors";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -19,6 +19,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@/service/api";
 
 import { useRouter } from "expo-router";
+import { Alert } from "react-native";
+import { AuthContext } from "@/context/AuthContext";
 
 const schema = z.object({
   email: z.string().email("* E-mail inválido"),
@@ -28,6 +30,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function LoginScreen() {
+  const { signIn } = useContext(AuthContext);
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -58,11 +62,47 @@ export default function LoginScreen() {
         password: data.password,
       });
 
+      console.log(response.data.token, "DATA");
+
+      signIn(response.data.token);
+
       if (!!response.data.token) {
-        router.push("/(app)");
+        signIn(response.data.token);
+
+        router.push("/(tabs)");
       }
     } catch (error) {
       console.log(error);
+
+      setIsLoading(false);
+
+      if (error.status === 400) {
+        Alert.alert("Error", "Email inválido", [
+          {
+            text: "Cancelar",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: () => {},
+          },
+        ]);
+      }
+
+      if (error.status === 401) {
+        Alert.alert("Error", "Senha inválida", [
+          {
+            text: "Cancelar",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: () => {},
+          },
+        ]);
+      }
     }
   };
   return (
