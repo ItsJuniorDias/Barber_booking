@@ -12,7 +12,7 @@ import {
   Footer,
   InputContainer,
 } from "./styles";
-import { TouchableOpacity } from "react-native";
+import { Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 
@@ -39,12 +39,19 @@ type FormData = z.infer<typeof schema>;
 export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
 
+  const [open, setOpen] = useState(true);
+
+  const [showAlert, setShowAlert] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -60,6 +67,63 @@ export default function RegisterScreen() {
 
   const onSubmit = async (data: FormData) => {
     console.log("Login:", data);
+
+    setIsLoading(true);
+
+    await api
+      .post("/register", {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+      })
+      .then((response) => {
+        setIsLoading(false);
+
+        Alert.alert("Sucesso", "User cadastrado com sucesso ✅", [
+          {
+            text: "Cancelar",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ]);
+
+        setValue("name", "");
+        setValue("email", "");
+        setValue("phone", "");
+        setValue("password", "");
+        setValue("confirmPassword", "");
+
+        console.log(response.data);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        console.log(error.status, "ERROR");
+
+        if (error.status === 402) {
+          Alert.alert("Error", "Email já cadastrado", [
+            {
+              text: "Cancelar",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
+            },
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ]);
+        }
+
+        if (error.status === 401) {
+          Alert.alert("Error", "Celular já cadastrado", [
+            {
+              text: "Cancelar",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
+            },
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ]);
+        }
+      });
   };
 
   return (
@@ -180,18 +244,18 @@ export default function RegisterScreen() {
         <Button
           title="Register"
           onPress={handleSubmit(onSubmit)}
-          isLoading={false}
+          isLoading={isLoading}
         />
 
-        <ButtonRegister onPress={() => router.push("/(register)")}>
+        <ButtonRegister onPress={() => router.back()}>
           <Text
-            title="Don't have an account?"
+            title="Already have an account? "
             color={Colors.light.gray}
             fontFamily="bold"
             fontSize={16}
           />
           <Text
-            title=" Register"
+            title=" Login"
             color={Colors.light.tint}
             fontFamily="bold"
             fontSize={16}

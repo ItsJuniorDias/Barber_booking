@@ -29,6 +29,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -48,6 +49,8 @@ export default function LoginScreen() {
 
   const onSubmit = async (data: FormData) => {
     console.log("Login:", data);
+
+    setIsLoading(true);
 
     try {
       const response = await api.post("/login", {
@@ -135,7 +138,7 @@ export default function LoginScreen() {
         <Button
           title="Login"
           onPress={handleSubmit(onSubmit)}
-          isLoading={false}
+          isLoading={isLoading}
         />
 
         <Footer onPress={() => router.push("/(register)")}>
