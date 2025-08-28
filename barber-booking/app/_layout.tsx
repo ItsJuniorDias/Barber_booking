@@ -20,27 +20,12 @@ SplashScreen.setOptions({
 });
 
 export default function RootLayout() {
-  const [token, setToken] = useState("");
-
-  const router = useRouter();
-
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     PlusJakartaSansRegular: require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
     PlusJakartaSansBold: require("../assets/fonts/PlusJakartaSans-Bold.ttf"),
     PlusJakartaSansSemiBold: require("../assets/fonts/PlusJakartaSans-SemiBold.ttf"),
   });
-
-  const handleStore = async () => {
-    const tokenUser = await AsyncStorage.getItem("@token");
-    console.log(tokenUser, "TOKEN");
-
-    setToken(tokenUser);
-  };
-
-  useEffect(() => {
-    handleStore();
-  }, []);
 
   if (!loaded) {
     // Async font loading only occurs in development.
