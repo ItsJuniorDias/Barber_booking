@@ -1,15 +1,21 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const authRoutes = require("./routes/authRoutes");
 
-const connectDB = require("./db");
+const connectDB = require("./config/db");
+
 const User = require("./models/User");
 
 require("dotenv").config();
 connectDB();
 
+// Twilio
+
 const app = express();
 app.use(express.json());
+
+app.use("/auth", authRoutes);
 
 // Lista dodos os usuários
 app.get("/users", authenticateToken, async (req, res) => {

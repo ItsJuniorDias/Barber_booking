@@ -141,7 +141,7 @@ export default function LoginScreen() {
           isLoading={isLoading}
         />
 
-        <Footer onPress={() => router.push("/(register)")}>
+        <Footer onPress={() => router.push("/(authentication)")}>
           <Text
             title="Don't have an account?"
             color={Colors.light.gray}
